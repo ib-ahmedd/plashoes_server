@@ -1,5 +1,7 @@
 package main
 
-func main() {
+import "plashoes-server/db"
 
+func main() {
+	db.InitDB()
 }
