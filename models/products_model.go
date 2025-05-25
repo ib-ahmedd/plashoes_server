@@ -54,8 +54,8 @@ func GetAllProducts () ([]Product, error){
 	return productsSlice,nil
 }
 
-func GetBestSellers () ([]Product, error){
-	query := "SELECT * FROM PRODUCTS ORDER BY sale ASC LIMIT 6"
+
+func GetProductsFromDB(query string) ([]Product, error){
 	rows,err := db.DB.Query(query)
 	if err != nil {
 		return nil,err
@@ -250,7 +250,7 @@ var ProductsArray []Product = []Product{
 	{
 		Product_name: "Women's Green Training",
 		Price: 69.80,
-		Image: "",
+		Image: "https://res.cloudinary.com/djnzi39nh/image/upload/v1747847630/women_green_training_jzdsf2.jpg",
 		Free_shipping: false,
 		Categories: "Training",
 		Sold: 47,
