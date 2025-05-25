@@ -1,17 +1,35 @@
 package main
 
 import (
-	"fmt"
-	// array "plashoes-server/Array"
-	"plashoes-server/models"
-
+	// "fmt"
 	"plashoes-server/db"
+	// "plashoes-server/models"
+	"plashoes-server/routes"
+	"time"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	db.InitDB()
+	server := gin.Default()
+	corsConfig := cors.Config{
+		AllowAllOrigins: true,
+		AllowMethods: []string {"POST", "GET", "UPDATE", "DELETE", "PUT"},
+		AllowHeaders: []string {"Content-Type", "Authorization"},
+		ExposeHeaders: []string {"Content-Length"},
+		AllowCredentials: true,
+		MaxAge: 12 * time.Hour,
 
-	// for _,item := range array.ProductsArray {
+	}
+
+	server.Use(cors.New(corsConfig))
+	routes.RegisterRoutes(server)
+	server.Run(":8080")
+	
+
+	// for _,item := range models.ProductsArray {
 	// 	err := item.Save()
 	// 	if err != nil {
 	// 		fmt.Println(err)
@@ -21,10 +39,4 @@ func main() {
 	// 	fmt.Println("Save success")
 	// }
 
-	products,err := models.GetAllProducts()
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	fmt.Println(products)
 }
