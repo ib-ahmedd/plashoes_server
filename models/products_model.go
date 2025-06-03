@@ -1,21 +1,11 @@
 package models
 
-import "plashoes-server/db"
-
-type Product struct {
-	ID            int64
-	Product_name  string
-	Price         float64
-	Image         string
-	Free_shipping bool
-	Categories    string
-	Sold          int
-	Sale          bool
-	Rating        float64
-	Date_arrived  string
-	Gender        string
-	Color         string
-}
+import (
+	"database/sql"
+	"fmt"
+	"plashoes-server/db"
+	"slices"
+)
 
 func (product Product) Save() error{
 	query := "INSERT INTO products (product_name, price, image, free_shipping, categories, sold, sale, rating, date_arrived, gender, color) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
@@ -28,30 +18,6 @@ func (product Product) Save() error{
 
 	_,err = stmt.Exec(product.Product_name, product.Price, product.Image, product.Free_shipping, product.Categories, product.Sold, product.Sale, product.Rating, product.Date_arrived, product.Gender, product.Color)
 	return err
-}
-
-func GetAllProducts () ([]Product, error){
-	query := "SELECT * FROM products"
-
-	rows,err := db.DB.Query(query)
-	if err != nil {
-		return nil,err
-	}
-	defer rows.Close()
-
-	var productsSlice []Product
-
-	for rows.Next() {
-		var product Product
-		err := rows.Scan(&product.ID, &product.Product_name, &product.Price, &product.Image, &product.Free_shipping, &product.Categories, &product.Sold, &product.Sale, &product.Rating, &product.Date_arrived, &product.Gender, &product.Color)
-		if err != nil {
-			return nil,err
-		}
-
-		productsSlice = append(productsSlice, product)
-	}
-
-	return productsSlice,nil
 }
 
 
@@ -77,13 +43,258 @@ func GetProductsFromDB(query string) ([]Product, error){
 	return productsSlice,nil
 }
 
+func GetSingleProduct(id int64) ([]any, error) {
+	query := "SELECT * FROM products WHERE id = ?"
+	row := db.DB.QueryRow(query, id)
+	var product Product
+	err := row.Scan(&product.ID, &product.Product_name, &product.Price, &product.Image, &product.Free_shipping, &product.Categories,&product.Sold, &product.Sale, &product.Rating, &product.Date_arrived, &product.Gender, &product.Color)
+	if err != nil {
+		fmt.Println(err)
+		return nil,err
+	}
+
+	relatedProducts, err := getRelatedProducts(product.Categories, product.ID)
+
+	if err != nil {
+		return nil,err
+	}
+
+	var comments []string
+
+	return []any{&product, relatedProducts, comments}, nil
+}
+
+func getRelatedProducts(categ string, ID int64 ) ([]Product, error){
+	query := "SELECT * FROM products WHERE categories = ? AND id != ?"
+	rows,err := db.DB.Query(query, categ, ID) 
+	if err != nil {
+		return nil,err
+	}
+	defer rows.Close()
+
+	var productsSlice []Product
+
+	for rows.Next() {
+		var product Product
+		err := rows.Scan(&product.ID, &product.Product_name, &product.Price, &product.Image, &product.Free_shipping, &product.Categories, &product.Sold, &product.Sale, &product.Rating, &product.Date_arrived, &product.Gender, &product.Color)
+		if err != nil {
+			return nil,err
+		}
+
+		productsSlice = append(productsSlice, product)
+	}
+
+	return productsSlice,nil
+}
+
+func GetProductPage(page string) (map[string]any, error){
+	query := "SELECT * FROM products WHERE gender = ?"
+
+	if page == "Sale" {
+		query = "SELECT * FROM products WHERE sale = true LIMIT 12"
+	}
+	rows,err := db.DB.Query(query, page)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var productsSlice []Product
+	var categories []string
+	var prices []float64
+
+	for rows.Next() {
+		var product Product
+		err := rows.Scan(&product.ID, &product.Product_name, &product.Price, &product.Image, &product.Free_shipping, &product.Categories, &product.Sold, &product.Sale, &product.Rating, &product.Date_arrived, &product.Gender, &product.Color)
+		if err != nil {
+			return nil,err
+		}
+
+		if !slices.Contains(categories, product.Categories){
+			categories = append(categories, product.Categories)
+		}
+
+		prices = append(prices, product.Price)
+		productsSlice = append(productsSlice, product)
+	}
+
+	count := len(productsSlice)
+	priceRange := map[string]float64 {"minPrice" : slices.Min(prices), "maxPrice": slices.Max(prices)}
+	requestResponse := map[string]any{"data": productsSlice, "categoriesData": categories, "count": count, "range": priceRange}
+	
+	return requestResponse, err
+}
+
+func GetAllProducts() (map[string]any, error){
+	productsQuery := "SELECT * FROM products LIMIT 12"
+	countQuery := "SELECT COUNT(*) FROM products"
+	categoriesQuery := "SELECT DISTINCT categories FROM products"
+	priceRangeQuery := "SELECT MIN(price) AS min_col, MAX(price) AS max_col FROM products"
+	
+
+//----------------products query----------------
+//----------------products query----------------
+	var productsSlice []Product
+	rows,err := db.DB.Query(productsQuery)
+
+	if err != nil {
+		return nil,err
+	}
+	defer rows.Close()
+
+
+	for rows.Next() {
+		var product Product
+		err := rows.Scan(&product.ID, &product.Product_name, &product.Price, &product.Image, &product.Free_shipping, &product.Categories, &product.Sold, &product.Sale, &product.Rating, &product.Date_arrived, &product.Gender, &product.Color)
+		if err != nil {
+			return nil,err
+		}
+
+		productsSlice = append(productsSlice, product)
+	}
+
+//----------------count query----------------
+//----------------count query----------------
+
+	var count int
+
+	err = db.DB.QueryRow(countQuery).Scan(&count)
+
+	if err != nil {
+		
+		return nil,err
+	}
+//----------------categories query----------------
+//----------------categories query----------------
+
+	var categories []string
+
+	catRows, err := db.DB.Query(categoriesQuery)
+
+	if err != nil {
+		return nil,err
+	}
+
+	defer catRows.Close()
+
+	for catRows.Next() {
+		var category string
+		err := catRows.Scan(&category)
+		if err != nil {
+			return nil,err
+		}
+
+		categories = append(categories, category)
+	}
+
+//----------------price range query----------------
+//----------------price range query----------------
+
+	var minPrice, maxPrice float64
+
+	err = db.DB.QueryRow(priceRangeQuery).Scan(&minPrice, &maxPrice)
+
+	if err != nil {
+		return nil,err
+	}
+
+	priceRange := map[string]float64{"minPrice": minPrice, "maxPrice": maxPrice}
+
+	requestResponse := map[string]any{"data": productsSlice, "categoriesData": categories, "count": count, "range": priceRange}
+
+	return requestResponse,nil
+}
+
+func FilterSortProducts(requestBody FilterSort)(map[string]any, error){
+	sortOrder := getSortOrder(requestBody.Sort)
+	var query string
+	var rows *sql.Rows
+	var countQuery string
+	var err error
+	var countErr error
+	var count int
+	
+	if requestBody.Category != "Default" {
+		if requestBody.Page == "Men" || requestBody.Page == "Women" {
+			query = "SELECT * FROM products WHERE categories = ? AND price < ? AND gender = ? ORDER BY " + sortOrder + " LIMIT 12 OFFSET ?"
+			rows,err = db.DB.Query(query, requestBody.Category, requestBody.PriceRange, requestBody.Page, requestBody.Offset)
+
+			countQuery =  "SELECT COUNT(*) FROM products WHERE categories = ? AND gender = ? AND price < ?"
+			countErr = db.DB.QueryRow(countQuery, requestBody.Category, requestBody.Page, requestBody.PriceRange).Scan(&count)
+			
+		} else if requestBody.Page == "Sale" {
+			query = "SELECT * FROM products WHERE categories = ? AND sale = true AND price < ? ORDER BY " + sortOrder + " LIMIT 12 OFFSET ?"
+			rows,err = db.DB.Query(query, requestBody.Category, requestBody.PriceRange, requestBody.Offset)
+
+			countQuery = "SELECT COUNT(*) FROM products WHERE categories = ? AND sale = true AND price < ?"
+			countErr = db.DB.QueryRow(countQuery, requestBody.Category, requestBody.PriceRange, requestBody.Offset).Scan(&count)
+
+		} else {
+			query = "SELECT * FROM products WHERE categories = ? AND price < ? ORDER BY " + sortOrder + " LIMIT 12 OFFSET ?"
+			rows,err = db.DB.Query(query, requestBody.Category, requestBody.PriceRange, requestBody.Offset)
+
+			countQuery = "SELECT COUNT(*) FROM products WHERE categories = ? AND price < ?"
+			countErr = db.DB.QueryRow(countQuery, requestBody.Category, requestBody.PriceRange, requestBody.Offset).Scan(&count)
+		}
+	} else {
+		if requestBody.Page == "Men" || requestBody.Page == "Women" {
+			fmt.Println(requestBody.Page, requestBody.PriceRange, requestBody.Offset)
+			query = "SELECT * FROM products WHERE gender = ? AND price < ? ORDER BY " + sortOrder + " LIMIT 12 OFFSET ?"
+			rows,err = db.DB.Query(query, requestBody.Page, requestBody.PriceRange, requestBody.Offset)
+
+			countQuery = "SELECT COUNT(*) FROM products WHERE gender = ? AND price < ?"
+			countErr = db.DB.QueryRow(countQuery, requestBody.Page, requestBody.PriceRange, requestBody.Offset).Scan(&count)
+
+		} else if requestBody.Page == "Sale" {
+			query = "SELECT * FROM products WHERE sale = true AND price < ? ORDER BY " + sortOrder + " LIMIT 12 OFFSET ?"
+			rows,err = db.DB.Query(query, requestBody.PriceRange, requestBody.Offset)
+
+			countQuery = "SELECT COUNT(*) FROM products WHERE sale = true AND price < ?"
+			countErr = db.DB.QueryRow(countQuery, requestBody.PriceRange, requestBody.Offset).Scan(&count)
+
+		} else {
+			query = "SELECT * FROM products WHERE price < ? ORDER BY " + sortOrder + " LIMIT 12 OFFSET ?"
+			rows,err = db.DB.Query(query, requestBody.PriceRange, requestBody.Offset)
+
+			countQuery = "SELECT COUNT(*) FROM products WHERE price < ?"
+			countErr = db.DB.QueryRow(countQuery, requestBody.PriceRange, requestBody.Offset).Scan(&count)
+		}
+	}
+
+	if countErr != nil { 
+		return nil,err
+	}
+
+	if err != nil {
+		return nil,err
+	}
+
+	var productsSlice []Product
+
+	defer rows.Close()
+
+
+	for rows.Next() {
+		var product Product
+		err := rows.Scan(&product.ID, &product.Product_name, &product.Price, &product.Image, &product.Free_shipping, &product.Categories, &product.Sold, &product.Sale, &product.Rating, &product.Date_arrived, &product.Gender, &product.Color)
+		if err != nil {
+			return nil,err
+		}
+
+		productsSlice = append(productsSlice, product)
+	}
+
+	responseData := map[string]any{"data": productsSlice, "count": count}
+	return responseData,nil
+}
+
 var ProductsArray []Product = []Product{
 	{
 		Product_name: "Men's black running",
 		Price: 79.90,
 		Image: "https://res.cloudinary.com/djnzi39nh/image/upload/v1747847628/men_black_running_la3hl3.jpg",
 		Free_shipping: true,
-		Categories: "running",
+		Categories: "Running",
 		Sold: 22,
 		Sale: false,
 		Rating: 4,

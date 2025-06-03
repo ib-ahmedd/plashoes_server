@@ -29,5 +29,13 @@ func createTables(){
 	if err != nil {
 		panic("Could not create products table.")
 	}
+
+	// createCartTable := `CREATE TABLE IF NOT EXISTS cart(
+	// id INTEGER PRIMARY KEY AUTOINCREMENT,
+	// user_id INTEGER NOT NULL,
+	// product_id INTEGER NOT NULL,
+	// quantity INTEGER NOT NULL,
+
+	// )`
 	
 }

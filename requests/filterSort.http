@@ -1,0 +1,10 @@
+POST http://localhost:8080/filter-sort
+Content-Type: application/json
+
+{
+    "page": "Men",
+    "priceRange": 200,
+    "sort": "popularity",
+    "category": "Running",
+    "offset": 0
+}
