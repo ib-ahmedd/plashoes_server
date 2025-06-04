@@ -22,12 +22,20 @@ func InitDB() {
 }
 
 func createTables(){
-	createUsersTable := "CREATE TABLE IF NOT EXISTS products( id INTEGER PRIMARY KEY AUTOINCREMENT,	product_name TEXT NOT NULL,	price FLOAT NOT NULL, image TEXT NOT NULL, free_shipping TEXT BOOLEAN NOT NULL,	categories TEXT NOT NULL, sold INT, sale BOOLEAN, rating FLOAT, date_arrived TEXT, gender TEXT NOT NULL, color TEXT NOT NULL)"
+	createProductsTable := "CREATE TABLE IF NOT EXISTS products( id INTEGER PRIMARY KEY AUTOINCREMENT,	product_name TEXT NOT NULL,	price FLOAT NOT NULL, image TEXT NOT NULL, free_shipping TEXT BOOLEAN NOT NULL,	categories TEXT NOT NULL, sold INT, sale BOOLEAN, rating FLOAT, date_arrived TEXT, gender TEXT NOT NULL, color TEXT NOT NULL)"
 
-	_,err := DB.Exec(createUsersTable)
+	_,err := DB.Exec(createProductsTable)
 
 	if err != nil {
 		panic("Could not create products table.")
+	}
+
+	createUsersTable := "CREATE TABLE IF NOT EXISTS users ( id INTEGER PRIMARY KEY AUTOINCREMENT, user_name TEXT NOT NULL, email TEXT NOT NULL UNIQUE, password TEXT NOT NULL, mobile_no INT NOT NULL, date_of_birth date NOT NULL, gender TEXT NOT NULL, country TEXT NOT NULL, postal_code INT NOT NULL, address TEXT NOT NULL, country_code TEXT NOT NULL )"
+
+	_,err = DB.Exec(createUsersTable)
+
+	if err != nil {
+		panic("Could not create users table.")
 	}
 
 	// createCartTable := `CREATE TABLE IF NOT EXISTS cart(

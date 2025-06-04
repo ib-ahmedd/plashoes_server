@@ -22,3 +22,25 @@ type FilterSort struct {
 	Category   string
 	Offset     int
 }
+
+type User struct {
+	ID            int64  `json:"id"`
+	User_name     string `json:"user_name"`
+	Email         string `json:"email"`
+	Password      string `json:"password"`
+	Mobile_no     int    `json:"mobile_no"`
+	Date_of_birth string `json:"date_of_birth"`
+	Gender        string `json:"gender"`
+	Country       string `json:"country"`
+	Postal_code   int    `json:"postal_code"`
+	Address       string `json:"address"`
+	Country_code  string `json:"country_code"`
+}
+
+type OTP struct {
+	Email string
+}
+
+type ClientOTP struct {
+	OTP int
+}

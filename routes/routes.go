@@ -1,6 +1,10 @@
 package routes
 
-import "github.com/gin-gonic/gin"
+import (
+	"plashoes-server/middlewares"
+
+	"github.com/gin-gonic/gin"
+)
 
 func RegisterRoutes(server *gin.Engine) {
 	server.GET("/best-sellers", getBestSellers)
@@ -9,4 +13,10 @@ func RegisterRoutes(server *gin.Engine) {
 	server.GET("/product/:id", getSingleProduct)
 	server.GET("/product-page/:page", getProducts)
 	server.POST("/filter-sort", filterSort)
+	server.POST("/otp", sendOTP)
+	
+	authenticate := server.Group("/")
+	authenticate.Use(middlewares.Authenticate)
+	authenticate.POST("/verify-otp", verifyOTP)
+	authenticate.POST("/register", registerUser)
 }
