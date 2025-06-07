@@ -2,17 +2,35 @@ package main
 
 import (
 	// "fmt"
+
 	"plashoes-server/db"
-	// "plashoes-server/models"
 	"plashoes-server/routes"
 	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	// "plashoes-server/models"
 )
 
 func main() {
 	db.InitDB()
+
+	// rows,_ := db.DB.Query("SELECT * FROM users")
+	// defer rows.Close()
+
+	// var usersSlice []models.User
+
+	// for rows.Next() {
+	// 	var user models.User
+	// 	rows.Scan(&user.ID, &user.User_name, &user.Email, &user.Password, &user.Mobile_no, &user.Date_of_birth, &user.Gender, &user.Country, &user.Postal_code, &user.Address, &user.Country)
+
+	// 	usersSlice = append(usersSlice, user)
+	// }
+
+	// fmt.Println(usersSlice)
+
+	// db.DB.Exec("DELETE FROM users")
+	
 	server := gin.Default()
 	corsConfig := cors.Config{
 		AllowAllOrigins: true,

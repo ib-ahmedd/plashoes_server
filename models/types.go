@@ -28,13 +28,13 @@ type User struct {
 	User_name     string `json:"user_name"`
 	Email         string `json:"email"`
 	Password      string `json:"password"`
-	Mobile_no     int    `json:"mobile_no"`
-	Date_of_birth string `json:"date_of_birth"`
+	Mobile_no     int    `json:"phone"`
+	Date_of_birth string `json:"DOB"`
 	Gender        string `json:"gender"`
 	Country       string `json:"country"`
-	Postal_code   int    `json:"postal_code"`
+	Postal_code   int    `json:"postalcode"`
 	Address       string `json:"address"`
-	Country_code  string `json:"country_code"`
+	Country_code  string `json:"code"`
 }
 
 type OTP struct {

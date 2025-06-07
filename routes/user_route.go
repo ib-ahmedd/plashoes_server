@@ -16,6 +16,8 @@ func registerUser(context *gin.Context) {
 	var user models.User
 	err := context.ShouldBindJSON(&user)
 
+	fmt.Println(user)
+
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse request data!", "error": err})
 		return
