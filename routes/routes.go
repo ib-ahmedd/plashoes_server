@@ -14,6 +14,7 @@ func RegisterRoutes(server *gin.Engine) {
 	server.GET("/product-page/:page", getProducts)
 	server.POST("/filter-sort", filterSort)
 	server.POST("/otp", sendOTP)
+	server.POST("/login", login)
 	
 	authenticate := server.Group("/")
 	authenticate.Use(middlewares.Authenticate)

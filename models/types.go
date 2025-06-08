@@ -44,3 +44,8 @@ type OTP struct {
 type ClientOTP struct {
 	OTP int
 }
+
+type LoginDetails struct {
+	Email    string
+	Password string
+}

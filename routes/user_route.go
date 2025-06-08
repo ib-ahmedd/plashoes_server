@@ -16,8 +16,6 @@ func registerUser(context *gin.Context) {
 	var user models.User
 	err := context.ShouldBindJSON(&user)
 
-	fmt.Println(user)
-
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse request data!", "error": err})
 		return
@@ -107,4 +105,42 @@ func verifyOTP(context *gin.Context){
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Incorrect OTP"})
 		return
 	}
+}
+
+func login(context *gin.Context){
+	var loginDetails models.LoginDetails
+	err := context.ShouldBindJSON(&loginDetails)
+
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse request data!", "error": err})
+		return
+	}
+
+	userExists, err := models.CheckUserExists(loginDetails.Email)
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Error reading database."})
+		return
+	}
+
+	if !userExists {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Email not registered."})
+		return
+	}
+
+	user,err := loginDetails.Login()
+
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "User name or password incorect."})
+		return
+	}
+
+	accessToken, err := utils.GenerateToken(user.Email)
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Unable to generate access token"})
+		return
+	}
+
+	context.JSON(http.StatusAccepted, gin.H{"userInfo": user, "accessToken": accessToken})
 }
