@@ -47,7 +47,7 @@ func getNewArrivals(context *gin.Context) {
 	context.JSON(http.StatusOK, events)
 }
 
-func getSaleProducts (context *gin.Context){
+func getSaleProducts(context *gin.Context){
 	query := "SELECT * FROM PRODUCTS WHERE sale = true LIMIT 6"
 	events, err := models.GetProductsFromDB(query)
 	if err != nil {

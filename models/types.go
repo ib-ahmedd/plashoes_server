@@ -1,26 +1,27 @@
 package models
 
 type Product struct {
-	ID            int64
-	Product_name  string
-	Price         float64
-	Image         string
-	Free_shipping bool
-	Categories    string
-	Sold          int
-	Sale          bool
-	Rating        float64
-	Date_arrived  string
-	Gender        string
-	Color         string
+	ID            int64   `json:"id"`
+	Product_name  string  `json:"product_name"`
+	Price         float64 `json:"price"`
+	Image         string  `json:"image"`
+	Free_shipping bool    `json:"free_shipping"`
+	Categories    string  `json:"categories"`
+	Sold          int     `json:"sold"`
+	Sale          bool    `json:"sale"`
+	Rating        float64 `json:"rating"`
+	Date_arrived  string  `json:"date_arrived"`
+	Gender        string  `json:"gender"`
+	Color         string  `json:"color"`
 }
 
-type FilterSort struct {
-	Page       string
-	PriceRange float64
-	Sort       string
-	Category   string
-	Offset     int
+type CartItem struct {
+	ID           int64   `json:"id"`
+	Image        string  `json:"image"`
+	Price        float64 `json:"price"`
+	ProductID    int64   `json:"product_id"`
+	Quantity     int     `json:"quantity"`
+	Product_name string  `json:"product_name"`
 }
 
 type User struct {
@@ -35,6 +36,14 @@ type User struct {
 	Postal_code   int    `json:"postalcode"`
 	Address       string `json:"address"`
 	Country_code  string `json:"code"`
+}
+
+type FilterSort struct {
+	Page       string
+	PriceRange float64
+	Sort       string
+	Category   string
+	Offset     int
 }
 
 type OTP struct {

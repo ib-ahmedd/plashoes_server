@@ -20,4 +20,5 @@ func RegisterRoutes(server *gin.Engine) {
 	authenticate.Use(middlewares.Authenticate)
 	authenticate.POST("/verify-otp", verifyOTP)
 	authenticate.POST("/register", registerUser)
+	authenticate.GET("/cart/:id", getCartProducts)
 }

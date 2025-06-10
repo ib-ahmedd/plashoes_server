@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -38,12 +39,12 @@ func createTables(){
 		panic("Could not create users table.")
 	}
 
-	// createCartTable := `CREATE TABLE IF NOT EXISTS cart(
-	// id INTEGER PRIMARY KEY AUTOINCREMENT,
-	// user_id INTEGER NOT NULL,
-	// product_id INTEGER NOT NULL,
-	// quantity INTEGER NOT NULL,
-
-	// )`
+	createCartTable := "CREATE TABLE IF NOT EXISTS cart(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL,	product_id INTEGER NOT NULL, quantity INTEGER NOT NULL, FOREIGN KEY(user_id) REFERENCES users(id), FOREIGN KEY(product_id) REFERENCES products(id))"
 	
+	_,err = DB.Exec(createCartTable)
+
+	if err != nil {
+		fmt.Println(err)
+		panic("Could not create cart table.")
+	}
 }
