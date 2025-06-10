@@ -21,4 +21,5 @@ func RegisterRoutes(server *gin.Engine) {
 	authenticate.POST("/verify-otp", verifyOTP)
 	authenticate.POST("/register", registerUser)
 	authenticate.GET("/cart/:id", getCartProducts)
+	authenticate.POST("/add-cart", addCartProduct)
 }

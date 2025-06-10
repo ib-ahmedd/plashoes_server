@@ -27,3 +27,21 @@ func getCartProducts(context *gin.Context) {
 
 	context.JSON(http.StatusOK, cartItems)
 }
+
+func addCartProduct(context *gin.Context){
+	var requestItem models.CartRequest
+
+	err := context.ShouldBindJSON(&requestItem)
+
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse request data!", "error": err})
+		return
+	}
+
+	err = requestItem.Save()
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could add item to cart", "error": err})
+		return
+	}
+}

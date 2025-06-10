@@ -19,6 +19,7 @@ type CartItem struct {
 	ID           int64   `json:"id"`
 	Image        string  `json:"image"`
 	Price        float64 `json:"price"`
+	UserID       int64   `json:"user_id"`
 	ProductID    int64   `json:"product_id"`
 	Quantity     int     `json:"quantity"`
 	Product_name string  `json:"product_name"`
@@ -57,4 +58,10 @@ type ClientOTP struct {
 type LoginDetails struct {
 	Email    string
 	Password string
+}
+
+type CartRequest struct {
+	UserID    int `json:"user_id"`
+	ProductID int `json:"product_id"`
+	Quantity  int `json:"quantity"`
 }
