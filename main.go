@@ -34,7 +34,7 @@ func main() {
 	server := gin.Default()
 	corsConfig := cors.Config{
 		AllowAllOrigins: true,
-		AllowMethods: []string {"POST", "GET", "UPDATE", "DELETE", "PUT"},
+		AllowMethods: []string {"POST", "GET", "UPDATE", "DELETE", "PUT", "PATCH"},
 		AllowHeaders: []string {"Content-Type", "Authorization"},
 		ExposeHeaders: []string {"Content-Length"},
 		AllowCredentials: true,

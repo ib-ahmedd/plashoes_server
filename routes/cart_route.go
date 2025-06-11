@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func getCartProducts(context *gin.Context) {
+func getCartitems(context *gin.Context) {
 	userId, err := strconv.ParseInt(context.Param("id"), 10, 64)
 
 	if err != nil {
@@ -28,7 +28,7 @@ func getCartProducts(context *gin.Context) {
 	context.JSON(http.StatusOK, cartItems)
 }
 
-func addCartProduct(context *gin.Context){
+func addCartitem(context *gin.Context){
 	var requestItem models.CartRequest
 
 	err := context.ShouldBindJSON(&requestItem)
@@ -44,4 +44,49 @@ func addCartProduct(context *gin.Context){
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could add item to cart", "error": err})
 		return
 	}
+}
+
+func updateCartitem(context *gin.Context){
+
+	cartItemID, err := strconv.ParseInt(context.Param("id"), 10, 64)
+	var requestItem models.CartRequest
+	
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse request data!", "error": err})
+		return
+	}
+	err = context.ShouldBindJSON(&requestItem)
+
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse request data!", "error": err})
+		return
+	}
+
+
+	err = requestItem.Update(cartItemID)
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could update item in cart", "error": err})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Cart updated successfully!"})
+}
+
+func deleteCartitem(context *gin.Context){
+	itemID, err := strconv.ParseInt(context.Param("id"), 10, 64)
+
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse user id."})
+		return
+	}
+
+	err = models.DeleteCartItem(itemID)
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Unable to delete cart item.", "error": err})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Item deleted successfully."})
 }
