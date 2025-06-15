@@ -39,6 +39,21 @@ type User struct {
 	Country_code  string `json:"code"`
 }
 
+type OrderItem struct {
+	ID            int64   `json:"id"`
+	UserID        int64   `json:"user_id"`
+	ProductID     int64   `json:"product_id"`
+	ProductName   string  `json:"product_name"`
+	Image         string  `json:"image"`
+	Price         string  `json:"price"`
+	Quantity      int     `json:"quantity"`
+	TotalPrice    float64 `json:"totalprice"`
+	OrderStatus   string  `json:"order_status"`
+	Reviewed      bool    `json:"reviewed"`
+	DateOrdered   string  `json:"date_ordered"`
+	DateDelivered string  `json:"date_delivered"`
+}
+
 type FilterSort struct {
 	Page       string
 	PriceRange float64
@@ -65,4 +80,9 @@ type CartRequest struct {
 	UserID    int   `json:"user_id"`
 	ProductID int   `json:"product_id"`
 	Quantity  int   `json:"quantity"`
+}
+
+type OrderRequest struct {
+	UserID     int64       `json:"user_id"`
+	OrderItems []OrderItem `json:"ordered_items"`
 }

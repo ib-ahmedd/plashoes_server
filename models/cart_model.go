@@ -56,3 +56,11 @@ func DeleteCartItem(itemID int64) error {
 
 	return err
 }
+
+func EmptyCart(userID int64) error{
+	query := "DELETE FROM carts WHERE user_id = ?"
+
+	_,err := db.DB.Exec(query, userID)
+
+	return err
+}

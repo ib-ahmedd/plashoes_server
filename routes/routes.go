@@ -18,10 +18,16 @@ func RegisterRoutes(server *gin.Engine) {
 	
 	authenticate := server.Group("/")
 	authenticate.Use(middlewares.Authenticate)
+	authenticate.GET("/check-session", checkSession)
 	authenticate.POST("/verify-otp", verifyOTP)
 	authenticate.POST("/register", registerUser)
 	authenticate.GET("/cart/:id", getCartitems)
 	authenticate.POST("/add-cart", addCartitem)
 	authenticate.PATCH("/cart-update/:id", updateCartitem)
 	authenticate.DELETE("/cart-delete/:id", deleteCartitem)
+	authenticate.DELETE("/empty-cart/:id", emptyCart)
+	authenticate.POST("/order", orderItems)
+	authenticate.GET("/orders/:id", getOrders)
+	authenticate.GET("/pending-reviews/:id", getPendingReviews)
+	authenticate.GET("/order-details/:id", getOrderDetails)
 }

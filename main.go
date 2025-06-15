@@ -45,16 +45,5 @@ func main() {
 	server.Use(cors.New(corsConfig))
 	routes.RegisterRoutes(server)
 	server.Run(":8080")
-	
-
-	// for _,item := range models.ProductsArray {
-	// 	err := item.Save()
-	// 	if err != nil {
-	// 		fmt.Println(err)
-	// 		break
-	// 	}
-
-	// 	fmt.Println("Save success")
-	// }
 
 }

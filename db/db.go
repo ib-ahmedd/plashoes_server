@@ -47,4 +47,13 @@ func createTables(){
 		fmt.Println(err)
 		panic("Could not create cart table.")
 	}
+
+	createOrdersTable := "CREATE TABLE IF NOT EXISTS orders ( id INTEGER PRIMARY KEY, user_id INTEGER, product_id INTEGER, date_ordered TEXT, quantity INTEGER, total_price FLOAT, order_status TEXT, reviewed BOOLEAN, date_delivered TEXT)"
+
+	_,err = DB.Exec(createOrdersTable)
+
+	if err != nil {
+		fmt.Println(err)
+		panic("Could not create orders table.")
+	}
 }

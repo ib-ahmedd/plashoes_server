@@ -144,3 +144,7 @@ func login(context *gin.Context){
 
 	context.JSON(http.StatusAccepted, gin.H{"userInfo": user, "accessToken": accessToken})
 }
+
+func checkSession(context *gin.Context){
+	context.JSON(http.StatusAccepted, gin.H{"message":"Session active"})
+}

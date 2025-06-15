@@ -77,7 +77,7 @@ func deleteCartitem(context *gin.Context){
 	itemID, err := strconv.ParseInt(context.Param("id"), 10, 64)
 
 	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse user id."})
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse item id."})
 		return
 	}
 
@@ -89,4 +89,22 @@ func deleteCartitem(context *gin.Context){
 	}
 
 	context.JSON(http.StatusOK, gin.H{"message": "Item deleted successfully."})
+}
+
+func emptyCart(context *gin.Context){
+	userID, err := strconv.ParseInt(context.Param("id"), 10, 64)
+
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse user id."})
+		return
+	}
+
+	err = models.EmptyCart(userID)
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not empty cart."})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Cart emptied successfully."})
 }
