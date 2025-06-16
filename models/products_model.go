@@ -20,6 +20,14 @@ func (product Product) Save() error{
 	return err
 }
 
+func UpdateRating(productId int64, newRating int) error {
+	query := "UPDATE products SET rating = ? WHERE id = ?"
+	
+	_,err := db.DB.Exec(query, newRating, productId)
+
+	return err
+}
+
 
 func GetProductsFromDB(query string) ([]Product, error){
 	rows,err := db.DB.Query(query)
@@ -59,9 +67,13 @@ func GetSingleProduct(id int64) ([]any, error) {
 		return nil,err
 	}
 
-	var comments []string
+	reviews,err := getProductReviews(id)
 
-	return []any{&product, relatedProducts, comments}, nil
+	if err != nil {
+		return nil,err
+	}
+
+	return []any{&product, relatedProducts, reviews}, nil
 }
 
 func getRelatedProducts(categ string, ID int64 ) ([]Product, error){
@@ -85,6 +97,35 @@ func getRelatedProducts(categ string, ID int64 ) ([]Product, error){
 	}
 
 	return productsSlice,nil
+}
+
+func getProductReviews(productID int64) ([]Review,error){
+	commentsQuery := "SELECT user_id, rating, review_title, review_detail, review_date, reviewer_name FROM reviews WHERE product_id = ?"
+
+	
+	rows,err := db.DB.Query(commentsQuery, productID)
+
+	if err != nil {
+		return nil,err
+	}
+
+	defer rows.Close()
+
+	var reviews []Review
+
+	for rows.Next(){
+		var review Review
+
+		err := rows.Scan(&review.UserID, &review.Stars, &review.ReviewTitle, &review.ReviewDetail, &review.ReviewDate, &review.ReviewerName)
+
+		if err != nil {
+			return nil,err
+		}
+
+		reviews = append(reviews, review)
+	}
+
+	return reviews,nil
 }
 
 func GetProductPage(page string) (map[string]any, error){

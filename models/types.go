@@ -54,6 +54,18 @@ type OrderItem struct {
 	DateDelivered string  `json:"date_delivered"`
 }
 
+type Review struct {
+	ID           int64  `json:"id"`
+	UserID       int64  `json:"user_id"`
+	ProductID    int64  `json:"product_id"`
+	OrderID      int64  `json:"order_id"`
+	ReviewerName string `json:"reviewer_name"`
+	Stars        int    `json:"stars"`
+	ReviewTitle  string `json:"review_title"`
+	ReviewDetail string `json:"review_detail"`
+	ReviewDate   string `json:"review_date"`
+}
+
 type FilterSort struct {
 	Page       string
 	PriceRange float64

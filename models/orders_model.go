@@ -11,7 +11,15 @@ func (orderItem OrderItem) Save() error{
 	_, err := db.DB.Exec(query, orderItem.UserID, orderItem.ProductID, orderItem.DateOrdered, orderItem.Quantity, orderItem.TotalPrice, orderItem.OrderStatus, orderItem.Reviewed, orderItem.DateDelivered)
 
 	return err
-} 
+}
+
+func UpdateReviewed(orderID int64) error {
+	query := "UPDATE orders SET reviewed = true WHERE id = ?"
+
+	_,err := db.DB.Exec(query, orderID)
+
+	return err
+}
 
 func GetOrders(userID int64) ([]OrderItem, error){
 	query := "SELECT orders.id, orders.product_id, image, product_name, total_price, quantity, date_ordered, order_status FROM products JOIN orders ON products.id = orders.product_id WHERE orders.user_id = ?"
@@ -42,7 +50,7 @@ func GetOrders(userID int64) ([]OrderItem, error){
 }
 
 func GetPendingReviews(userID int64)([]OrderItem, error){
-	query := "SELECT orders.id, orders.product_id, image, product_name, date_delivered FROM products JOIN orders ON products.id = orders.product_id WHERE orders.user_id = ? AND orders.order_status = 'Delivered'"
+	query := "SELECT orders.id, orders.product_id, image, product_name, date_delivered FROM products JOIN orders ON products.id = orders.product_id WHERE orders.user_id = ? AND orders.order_status = 'Delivered' AND orders.reviewed = false"
 
 	rows,err := db.DB.Query(query, userID)
 
@@ -83,4 +91,19 @@ func GetOrderDetails(orderID int64)(OrderItem, error){
 	}
 
 	return orderdetails,err
+}
+
+func GetReviewItem(orderID int64) (OrderItem,error){
+	query := "SELECT image, product_name FROM products JOIN orders ON products.id = orders.product_id WHERE orders.product_id = ?"
+
+	var reviewItem OrderItem
+
+	err := db.DB.QueryRow(query, orderID).Scan(&reviewItem.Image, &reviewItem.ProductName)
+
+	if err != nil {
+		fmt.Println(err)
+		return OrderItem{}, nil
+	}
+
+	return reviewItem,err
 }

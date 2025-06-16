@@ -30,4 +30,6 @@ func RegisterRoutes(server *gin.Engine) {
 	authenticate.GET("/orders/:id", getOrders)
 	authenticate.GET("/pending-reviews/:id", getPendingReviews)
 	authenticate.GET("/order-details/:id", getOrderDetails)
+	authenticate.GET("/review/:id", getReviewItem)
+	authenticate.POST("/submit-review", submitReview)
 }

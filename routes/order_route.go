@@ -96,3 +96,22 @@ func getOrderDetails(context *gin.Context){
 
 	context.JSON(http.StatusOK, orderDetails)
 }
+
+func getReviewItem(context *gin.Context){
+	orderID, err := strconv.ParseInt(context.Param("id"), 10, 64)
+
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse order id."})
+		return
+	}
+
+	reviewDetails,err := models.GetReviewItem(orderID)
+
+	if err != nil {
+		fmt.Println(err)
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Unable to get review details."})
+		return
+	}
+
+	context.JSON(http.StatusOK, reviewDetails)
+}

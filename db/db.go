@@ -48,12 +48,21 @@ func createTables(){
 		panic("Could not create cart table.")
 	}
 
-	createOrdersTable := "CREATE TABLE IF NOT EXISTS orders ( id INTEGER PRIMARY KEY, user_id INTEGER, product_id INTEGER, date_ordered TEXT, quantity INTEGER, total_price FLOAT, order_status TEXT, reviewed BOOLEAN, date_delivered TEXT)"
+	createOrdersTable := "CREATE TABLE IF NOT EXISTS orders (id INTEGER PRIMARY KEY, user_id INTEGER, product_id INTEGER, date_ordered TEXT, quantity INTEGER, total_price FLOAT, order_status TEXT, reviewed BOOLEAN, date_delivered TEXT, FOREIGN KEY(user_id) REFERENCES users(id), FOREIGN KEY(product_id) REFERENCES products(id))"
 
 	_,err = DB.Exec(createOrdersTable)
 
 	if err != nil {
 		fmt.Println(err)
 		panic("Could not create orders table.")
+	}
+
+	createReviewsTable := "CREATE TABLE IF NOT EXISTS reviews(id PRIMARY KEY, product_id INTEGER, user_id INTEGER, order_id, reviewer_name TEXT, rating INTEGER, review_title TEXT, review_detail TEXT, review_date TEXT, FOREIGN KEY(user_id) REFERENCES users(id), FOREIGN KEY(product_id) REFERENCES products(id))"
+
+	_,err = DB.Exec(createReviewsTable)
+
+	if err != nil {
+		fmt.Println(err)
+		panic("Could not create reviews table.")
 	}
 }
