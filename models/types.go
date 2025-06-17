@@ -75,23 +75,8 @@ type FilterSort struct {
 }
 
 type OTP struct {
-	Email string
-}
-
-type ClientOTP struct {
-	OTP int
-}
-
-type LoginDetails struct {
-	Email    string
-	Password string
-}
-
-type CartRequest struct {
-	ID        int64 `json:"id"`
-	UserID    int   `json:"user_id"`
-	ProductID int   `json:"product_id"`
-	Quantity  int   `json:"quantity"`
+	Email string `json:"email"`
+	OTP   int    `json:"OTP"`
 }
 
 type OrderRequest struct {

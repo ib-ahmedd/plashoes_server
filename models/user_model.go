@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 	"plashoes-server/db"
 	"plashoes-server/utils"
 )
@@ -35,7 +36,7 @@ func (user User) Save() (User,error) {
 	return user,err
 }
 
-func (loginDetails LoginDetails) Login() (User,error){
+func (loginDetails User) Login() (User,error){
 	var password string
 	passwordQuery := "SELECT password FROM users WHERE email = ?"
 	err := db.DB.QueryRow(passwordQuery, loginDetails.Email).Scan(&password)
@@ -57,6 +58,21 @@ func (loginDetails LoginDetails) Login() (User,error){
 	err = db.DB.QueryRow(userQuery, loginDetails.Email).Scan(&userDetails.ID, &userDetails.User_name, &userDetails.Email, &userDetails.Password, &userDetails.Mobile_no, &userDetails.Date_of_birth, &userDetails.Gender, &userDetails.Country, &userDetails.Postal_code, &userDetails.Address, &userDetails.Country_code)
 
 	return userDetails, err
+}
+
+func (resetRequest User) ResetPassword() error {
+	query := "UPDATE users SET password = ? WHERE email = ?"
+
+	hashedPassword, err := utils.HashPassword(resetRequest.Password)
+
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	_,err = db.DB.Exec(query, hashedPassword, resetRequest.Email)
+
+	return err
 }
 
 func CheckUserExists(email string) (bool, error) {

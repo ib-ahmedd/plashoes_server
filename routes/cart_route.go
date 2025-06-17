@@ -29,7 +29,7 @@ func getCartitems(context *gin.Context) {
 }
 
 func addCartitem(context *gin.Context){
-	var requestItem models.CartRequest
+	var requestItem models.CartItem
 
 	err := context.ShouldBindJSON(&requestItem)
 
@@ -49,7 +49,7 @@ func addCartitem(context *gin.Context){
 func updateCartitem(context *gin.Context){
 
 	cartItemID, err := strconv.ParseInt(context.Param("id"), 10, 64)
-	var requestItem models.CartRequest
+	var requestItem models.CartItem
 	
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse request data!", "error": err})
@@ -102,6 +102,7 @@ func emptyCart(context *gin.Context){
 	err = models.EmptyCart(userID)
 
 	if err != nil {
+		fmt.Println(err)
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not empty cart."})
 		return
 	}

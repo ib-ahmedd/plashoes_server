@@ -4,7 +4,7 @@ import (
 	"plashoes-server/db"
 )
 
-func (item CartRequest) Save() error {
+func (item CartItem) Save() error {
 	query := "INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, ?)"
 
 	_,err := db.DB.Exec(query, item.UserID, item.ProductID, item.Quantity)
@@ -12,7 +12,7 @@ func (item CartRequest) Save() error {
 	return err
 }
 
-func (item CartRequest) Update(itemID int64) error {
+func (item CartItem) Update(itemID int64) error {
 	query := "UPDATE cart SET quantity = ? WHERE id = ?"
 
 	_,err := db.DB.Exec(query, item.Quantity, itemID)
@@ -58,7 +58,7 @@ func DeleteCartItem(itemID int64) error {
 }
 
 func EmptyCart(userID int64) error{
-	query := "DELETE FROM carts WHERE user_id = ?"
+	query := "DELETE FROM cart WHERE user_id = ?"
 
 	_,err := db.DB.Exec(query, userID)
 
