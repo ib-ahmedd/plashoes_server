@@ -38,39 +38,26 @@ func addCartitem(context *gin.Context){
 		return
 	}
 
-	err = requestItem.Save()
+	itemExists, err := models.ItemInCart(requestItem.UserID, requestItem.ProductID)
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not check if item exists in cart.", "error": err})
+		return
+	}
+
+	if itemExists {
+		err = requestItem.Update()
+	}else{
+		err = requestItem.Save()
+	}
+
 
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could add item to cart", "error": err})
 		return
 	}
-}
 
-func updateCartitem(context *gin.Context){
-
-	cartItemID, err := strconv.ParseInt(context.Param("id"), 10, 64)
-	var requestItem models.CartItem
-	
-	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse request data!", "error": err})
-		return
-	}
-	err = context.ShouldBindJSON(&requestItem)
-
-	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse request data!", "error": err})
-		return
-	}
-
-
-	err = requestItem.Update(cartItemID)
-
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could update item in cart", "error": err})
-		return
-	}
-
-	context.JSON(http.StatusOK, gin.H{"message": "Cart updated successfully!"})
+	context.JSON(http.StatusCreated, gin.H{"message":"Items added successfully."})
 }
 
 func deleteCartitem(context *gin.Context){

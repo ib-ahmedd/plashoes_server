@@ -16,7 +16,6 @@ func RegisterRoutes(server *gin.Engine) {
 	server.POST("/otp", sendOTP)
 	server.POST("/forgot-password", sendForgotOTP)
 	server.POST("/login", login)
-	server.POST("/test-context", testContext)
 	
 	authenticate := server.Group("/")
 	authenticate.Use(middlewares.Authenticate)
@@ -26,7 +25,6 @@ func RegisterRoutes(server *gin.Engine) {
 	authenticate.PATCH("/reset-password", resetPassword)
 	authenticate.GET("/cart/:id", getCartitems)
 	authenticate.POST("/add-cart", addCartitem)
-	authenticate.PATCH("/cart-update/:id", updateCartitem)
 	authenticate.DELETE("/cart-delete/:id", deleteCartitem)
 	authenticate.DELETE("/empty-cart/:id", emptyCart)
 	authenticate.POST("/order", orderItems)

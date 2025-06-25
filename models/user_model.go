@@ -23,7 +23,7 @@ func (user User) Save() (User,error) {
 		return User{},err
 	}
 
-	result, err := stmt.Exec(user.User_name, user.Email, hashedPassword, user.Mobile_no, user.Date_of_birth, user.Gender, user.Country, user.Postal_code, user.Address, user.Country)
+	result, err := stmt.Exec(user.User_name, user.Email, hashedPassword, user.Mobile_no, user.Date_of_birth, user.Gender, user.Country, user.Postal_code, user.Address, user.Country_code)
 
 	if err != nil {
 		return User{},err

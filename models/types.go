@@ -76,7 +76,7 @@ type FilterSort struct {
 
 type OTP struct {
 	Email string `json:"email"`
-	OTP   int    `json:"OTP"`
+	Code  int    `json:"code"`
 }
 
 type OrderRequest struct {

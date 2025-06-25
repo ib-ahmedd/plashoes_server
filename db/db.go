@@ -65,4 +65,13 @@ func createTables(){
 		fmt.Println(err)
 		panic("Could not create reviews table.")
 	}
+
+	createOTPsTable := "CREATE TABLE IF NOT EXISTS OTPs(id PRIMARY KEY, email TEXT, code INTEGER)"
+
+	_,err = DB.Exec(createOTPsTable)
+
+	if err != nil {
+		fmt.Println(err)
+		panic("Could not create OTPs table.")
+	}
 }

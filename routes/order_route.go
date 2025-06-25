@@ -37,7 +37,7 @@ func orderItems(context *gin.Context) {
 		}
 	}
 
-	context.JSON(http.StatusOK, gin.H{"message": "Items ordered successfully."})
+	context.JSON(http.StatusCreated, gin.H{"message": "Items ordered successfully."})
 }
 
 func getOrders(context *gin.Context){

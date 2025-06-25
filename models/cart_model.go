@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"plashoes-server/db"
 )
 
@@ -12,12 +13,27 @@ func (item CartItem) Save() error {
 	return err
 }
 
-func (item CartItem) Update(itemID int64) error {
-	query := "UPDATE cart SET quantity = ? WHERE id = ?"
+func (item CartItem) Update() error {
 
-	_,err := db.DB.Exec(query, item.Quantity, itemID)
+	fmt.Println(item.UserID, item.ProductID, item.Quantity)
+	query := "UPDATE cart SET quantity = ? WHERE user_id = ? AND product_id = ?"
+
+	_,err := db.DB.Exec(query, item.Quantity, item.UserID, item.ProductID)
 
 	return err
+}
+
+func ItemInCart(userID int64, productID int64) (bool, error) {
+	query := "SELECT COUNT(1) FROM cart WHERE user_id = ? AND product_id = ?"
+
+	var count int
+	err := db.DB.QueryRow(query, userID, productID).Scan(&count)
+
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
 }
 
 func GetCartItems(userId int64) ([]CartItem,error){
