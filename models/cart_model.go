@@ -23,6 +23,14 @@ func (item CartItem) Update() error {
 	return err
 }
 
+func (item CartItem) UpdateQuantity(itemID int64) error {
+	query := "UPDATE cart SET quantity = ? WHERE id = ?"
+
+	_,err := db.DB.Exec(query, item.Quantity, itemID)
+
+	return err
+}
+
 func ItemInCart(userID int64, productID int64) (bool, error) {
 	query := "SELECT COUNT(1) FROM cart WHERE user_id = ? AND product_id = ?"
 

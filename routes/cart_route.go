@@ -60,6 +60,33 @@ func addCartitem(context *gin.Context){
 	context.JSON(http.StatusCreated, gin.H{"message":"Items added successfully."})
 }
 
+func updateItemQuantity(context *gin.Context){
+
+	cartItemID, err := strconv.ParseInt(context.Param("id"), 10, 64)
+	var requestItem models.CartItem
+	
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse request data!", "error": err})
+		return
+	}
+	err = context.ShouldBindJSON(&requestItem)
+
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse request data!", "error": err})
+		return
+	}
+
+
+	err = requestItem.UpdateQuantity(cartItemID)
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could update item in cart", "error": err})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Cart updated successfully!"})
+}
+
 func deleteCartitem(context *gin.Context){
 	itemID, err := strconv.ParseInt(context.Param("id"), 10, 64)
 

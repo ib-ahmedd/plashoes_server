@@ -25,6 +25,7 @@ func RegisterRoutes(server *gin.Engine) {
 	authenticate.PATCH("/reset-password", resetPassword)
 	authenticate.GET("/cart/:id", getCartitems)
 	authenticate.POST("/add-cart", addCartitem)
+	authenticate.PATCH("cart-update", updateItemQuantity)
 	authenticate.DELETE("/cart-delete/:id", deleteCartitem)
 	authenticate.DELETE("/empty-cart/:id", emptyCart)
 	authenticate.POST("/order", orderItems)
